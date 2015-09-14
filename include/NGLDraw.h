@@ -44,7 +44,7 @@ class NGLDraw
     /// @brief this method is called everytime the mouse wheel is moved
     /// @param _event the SDL mouse event structure containing all mouse info
     //----------------------------------------------------------------------------------------------------------------------
-    //void wheelEvent(const SDL_MouseWheelEvent &_event);
+    void wheelEvent(double _x, double _y);
   private :
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief method to load transform data to the shaders

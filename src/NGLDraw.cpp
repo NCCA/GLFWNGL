@@ -200,33 +200,33 @@ void NGLDraw::mouseReleaseEvent ( int _button)
     m_translate=false;
   }
 }
-/*
+
 //----------------------------------------------------------------------------------------------------------------------
-void NGLDraw::wheelEvent(const SDL_MouseWheelEvent &_event)
+void NGLDraw::wheelEvent(double _x, double _y)
 {
 
   // check the diff of the wheel position (0 means no change)
-  if(_event.y > 0)
+  if(_y > 0)
   {
     m_modelPos.m_z+=ZOOM;
     this->draw();
   }
-  else if(_event.y <0 )
+  else if(_y <0 )
   {
     m_modelPos.m_z-=ZOOM;
     this->draw();
   }
 
   // check the diff of the wheel position (0 means no change)
-  if(_event.x > 0)
+  if(_x > 0)
   {
     m_modelPos.m_x-=ZOOM;
     this->draw();
   }
-  else if(_event.x <0 )
+  else if(_x <0 )
   {
     m_modelPos.m_x+=ZOOM;
     this->draw();
   }
-}*/
+}
 //----------------------------------------------------------------------------------------------------------------------

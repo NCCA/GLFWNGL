@@ -17,6 +17,7 @@ static int s_activeButton;
 void keyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods);
 void mouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mods);
 void cursorPosCallback(GLFWwindow* _window, double _xpos, double _ypos);
+void scrollCallback(GLFWwindow* _window, double _xoffset, double _yoffset);
 int main()
 {
 
@@ -49,6 +50,8 @@ int main()
   glfwSetMouseButtonCallback(window, mouseButtonCallback);
   // mouse cursor move callback
   glfwSetCursorPosCallback(window, cursorPosCallback);
+  // scroll wheel callback
+  glfwSetScrollCallback(window, scrollCallback);
   // we need to initialise the NGL lib which will load all of the OpenGL functions, this must
   // be done once we have a valid GL context but before we call any GL commands. If we dont do
   // this everything will crash
@@ -113,7 +116,7 @@ void mouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mod
   else if (_action == GLFW_RELEASE)
   {
     s_activeButton=_button;
-    scene->mousePressEvent(_button,x,y);
+    scene->mouseReleaseEvent(_button);
   }
 
 }
@@ -125,3 +128,9 @@ void cursorPosCallback(GLFWwindow* _window, double _xpos, double _ypos)
 
   scene->mouseMoveEvent(s_activeButton,_xpos,_ypos);
 }
+
+void scrollCallback(GLFWwindow* _window, double _xoffset, double _yoffset)
+{
+  scene->wheelEvent(_xoffset,_yoffset);
+}
+
