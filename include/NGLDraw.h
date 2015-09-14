@@ -3,8 +3,7 @@
 
 #include <ngl/Camera.h>
 #include <ngl/Light.h>
-//#include <SDL.h>
-
+#include <GLFW/glfw3.h>
 class NGLDraw
 {
   public :
@@ -30,17 +29,17 @@ class NGLDraw
     /// @brief this method is called every time a mouse is moved
     /// @param _event the SDL mouse event structure containing all mouse info
     //----------------------------------------------------------------------------------------------------------------------
-   // void mouseMoveEvent (const SDL_MouseMotionEvent &_event);
+    void mouseMoveEvent (int _button, float _x, float _y);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called every time a mouse button is presses
     /// @param _event the SDL mouse event structure containing all mouse info
     //----------------------------------------------------------------------------------------------------------------------
-    //void mousePressEvent (const SDL_MouseButtonEvent &_event);
+    void mousePressEvent (int _button, double _x, double _y);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called everytime the mouse button is released
     /// @param _event the SDL mouse event structure containing all mouse info
     //----------------------------------------------------------------------------------------------------------------------
-    //void mouseReleaseEvent (const SDL_MouseButtonEvent &_event);
+    void mouseReleaseEvent (int _button);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called everytime the mouse wheel is moved
     /// @param _event the SDL mouse event structure containing all mouse info

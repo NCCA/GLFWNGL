@@ -5,8 +5,18 @@
 #include <GLFW/glfw3.h>
 
 
+// now we create an instance of our ngl class, this will init NGL and setup basic
+// opengl stuff ext. When this falls out of scope the dtor will be called and cleanup
+// our gl stuff
+// Alas this has to be GLOBAL (Yuk) due to the use of callback in GLFW so we can pass this in
+// I could wrap in a singleton etc but can't be arsed as this is a simple demo. Ideall I would
+// re-write the mouse code to do something else or re-structue but for now this will do
+NGLDraw *scene;
+static int s_activeButton;
 
-
+void keyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods);
+void mouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mods);
+void cursorPosCallback(GLFWwindow* _window, double _xpos, double _ypos);
 int main()
 {
 
@@ -24,7 +34,7 @@ int main()
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   /* Create a windowed mode window and its OpenGL context */
-  window = glfwCreateWindow(640, 480, "GLFW and NGL", NULL, NULL);
+  window = glfwCreateWindow(1024, 720, "GLFW and NGL", NULL, NULL);
   if (!window)
   {
     glfwTerminate();
@@ -33,38 +43,85 @@ int main()
 
   /* Make the window's context current */
   glfwMakeContextCurrent(window);
-
-
-
+  // set the key callback
+  glfwSetKeyCallback(window, keyCallback);
+  // set mouse callback
+  glfwSetMouseButtonCallback(window, mouseButtonCallback);
+  // mouse cursor move callback
+  glfwSetCursorPosCallback(window, cursorPosCallback);
   // we need to initialise the NGL lib which will load all of the OpenGL functions, this must
   // be done once we have a valid GL context but before we call any GL commands. If we dont do
   // this everything will crash
   ngl::NGLInit::instance();
+  scene = new NGLDraw;
   // now clear the screen and swap whilst NGL inits (which may take time)
   glClear(GL_COLOR_BUFFER_BIT);
-  // now we create an instance of our ngl class, this will init NGL and setup basic
-  // opengl stuff ext. When this falls out of scope the dtor will be called and cleanup
-  // our gl stuff
-  NGLDraw ngl;
   // resize the ngl to set the screen size and camera stuff
-  ngl.resize(640,480);
+  scene->resize(1024,720);
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
   {
+
+
+
       /* Render here */
-      ngl.draw();
+      scene->draw();
+
+
+
       /* Swap front and back buffers */
       glfwSwapBuffers(window);
 
       /* Poll for and process events */
       glfwPollEvents();
-  }
 
+  }
+  delete scene;
   glfwTerminate();
 
 
 }
 
+void keyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
+{
+    if (_key == GLFW_KEY_ESCAPE && _action == GLFW_PRESS)
+    {
+      delete scene;
+      exit(EXIT_SUCCESS);
+    }
+    if (_key == GLFW_KEY_W && _action == GLFW_PRESS)
+    {
+      glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    }
+    if (_key == GLFW_KEY_S && _action == GLFW_PRESS)
+    {
+      glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    }
 
+}
 
+void mouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mods)
+{
+  double x,y;
+  glfwGetCursorPos	(_window,&x,&y);
+  if (_action == GLFW_PRESS)
+  {
+    s_activeButton=_button;
+    scene->mousePressEvent(_button,x,y);
+  }
 
+  else if (_action == GLFW_RELEASE)
+  {
+    s_activeButton=_button;
+    scene->mousePressEvent(_button,x,y);
+  }
+
+}
+
+void cursorPosCallback(GLFWwindow* _window, double _xpos, double _ypos)
+{
+  double x,y;
+  glfwGetCursorPos(_window,&x,&y);
+
+  scene->mouseMoveEvent(s_activeButton,_xpos,_ypos);
+}

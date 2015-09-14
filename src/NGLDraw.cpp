@@ -136,28 +136,28 @@ void NGLDraw::loadMatricesToShader()
   shader->setShaderParamFromMat3("normalMatrix",normalMatrix);
   shader->setShaderParamFromMat4("M",M);
 }
-/*
+
 //----------------------------------------------------------------------------------------------------------------------
-void NGLDraw::mouseMoveEvent (const SDL_MouseMotionEvent &_event)
+void NGLDraw::mouseMoveEvent (int _button, float _x, float _y)
 {
-  if(m_rotate && _event.state &SDL_BUTTON_LMASK)
+  if(m_rotate && _button == GLFW_MOUSE_BUTTON_LEFT)
   {
-    int diffx=_event.x-m_origX;
-    int diffy=_event.y-m_origY;
+    int diffx=_x-m_origX;
+    int diffy=_y-m_origY;
     m_spinXFace += (float) 0.5f * diffy;
     m_spinYFace += (float) 0.5f * diffx;
-    m_origX = _event.x;
-    m_origY = _event.y;
+    m_origX = _x;
+    m_origY = _y;
     this->draw();
 
   }
   // right mouse translate code
-  else if(m_translate && _event.state &SDL_BUTTON_RMASK)
+  else if(m_translate && _button == GLFW_MOUSE_BUTTON_RIGHT)
   {
-    int diffX = (int)(_event.x - m_origXPos);
-    int diffY = (int)(_event.y - m_origYPos);
-    m_origXPos=_event.x;
-    m_origYPos=_event.y;
+    int diffX = (int)(_x - m_origXPos);
+    int diffY = (int)(_y - m_origYPos);
+    m_origXPos=_x;
+    m_origYPos=_y;
     m_modelPos.m_x += INCREMENT * diffX;
     m_modelPos.m_y -= INCREMENT * diffY;
     this->draw();
@@ -166,42 +166,41 @@ void NGLDraw::mouseMoveEvent (const SDL_MouseMotionEvent &_event)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void NGLDraw::mousePressEvent (const SDL_MouseButtonEvent &_event)
+void NGLDraw::mousePressEvent (int _button, double _x, double _y)
 {
   // this method is called when the mouse button is pressed in this case we
   // store the value where the maouse was clicked (x,y) and set the Rotate flag to true
-  if(_event.button == SDL_BUTTON_LEFT)
+  if(_button == GLFW_MOUSE_BUTTON_LEFT)
   {
-    m_origX = _event.x;
-    m_origY = _event.y;
+    m_origX = _x;
+    m_origY = _y;
     m_rotate =true;
   }
   // right mouse translate mode
-  else if(_event.button == SDL_BUTTON_RIGHT)
+  else if(_button == GLFW_MOUSE_BUTTON_RIGHT )
   {
-    m_origXPos = _event.x;
-    m_origYPos = _event.y;
+    m_origXPos = _x;
+    m_origYPos = _y;
     m_translate=true;
   }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/*
-void NGLDraw::mouseReleaseEvent (const SDL_MouseButtonEvent &_event)
+void NGLDraw::mouseReleaseEvent ( int _button)
 {
   // this event is called when the mouse button is released
   // we then set Rotate to false
-  //if (_event.button == SDL_BUTTON_LEFT)
+  if (_button == GLFW_MOUSE_BUTTON_LEFT)
   {
     m_rotate=false;
   }
   // right mouse translate mode
-  if (_event.button == SDL_BUTTON_RIGHT)
+  if (_button == GLFW_MOUSE_BUTTON_RIGHT)
   {
     m_translate=false;
   }
 }
-
+/*
 //----------------------------------------------------------------------------------------------------------------------
 void NGLDraw::wheelEvent(const SDL_MouseWheelEvent &_event)
 {
