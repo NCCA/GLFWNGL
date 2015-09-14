@@ -3,15 +3,17 @@
 #include "NGLDraw.h"
 #include <ngl/NGLInit.h>
 #include <GLFW/glfw3.h>
+#include <boost/scoped_ptr.hpp>
 
 
 // now we create an instance of our ngl class, this will init NGL and setup basic
 // opengl stuff ext. When this falls out of scope the dtor will be called and cleanup
 // our gl stuff
-// Alas this has to be GLOBAL (Yuk) due to the use of callback in GLFW so we can pass this in
-// I could wrap in a singleton etc but can't be arsed as this is a simple demo. Ideall I would
-// re-write the mouse code to do something else or re-structue but for now this will do
-NGLDraw *scene;
+// Alas this has to be GLOBAL (Yuk) due to the use of callback in GLFW and we need to access it
+// it has to be a pointer as we need to ensure we have a context before we init the class (or re-engineer)
+// to have a initGL functions.
+// best to make this a scoped pointer for safety,
+boost::scoped_ptr<NGLDraw> scene;
 static int s_activeButton;
 
 void keyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods);
@@ -56,7 +58,7 @@ int main()
   // be done once we have a valid GL context but before we call any GL commands. If we dont do
   // this everything will crash
   ngl::NGLInit::instance();
-  scene = new NGLDraw;
+  scene.reset(new NGLDraw);
   // now clear the screen and swap whilst NGL inits (which may take time)
   glClear(GL_COLOR_BUFFER_BIT);
   // resize the ngl to set the screen size and camera stuff
@@ -65,21 +67,16 @@ int main()
   while (!glfwWindowShouldClose(window))
   {
 
+    /* Render here */
+    scene->draw();
 
+    /* Swap front and back buffers */
+    glfwSwapBuffers(window);
 
-      /* Render here */
-      scene->draw();
-
-
-
-      /* Swap front and back buffers */
-      glfwSwapBuffers(window);
-
-      /* Poll for and process events */
-      glfwPollEvents();
+    /* Poll for and process events */
+    glfwPollEvents();
 
   }
-  delete scene;
   glfwTerminate();
 
 
@@ -89,7 +86,6 @@ void keyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int 
 {
     if (_key == GLFW_KEY_ESCAPE && _action == GLFW_PRESS)
     {
-      delete scene;
       exit(EXIT_SUCCESS);
     }
     if (_key == GLFW_KEY_W && _action == GLFW_PRESS)
