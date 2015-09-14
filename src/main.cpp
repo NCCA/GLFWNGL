@@ -14,16 +14,20 @@
 // to have a initGL functions.
 // best to make this a scoped pointer for safety,
 boost::scoped_ptr<NGLDraw> scene;
+// used to store the current active button for the mouse callbacks
 static int s_activeButton;
-
+// key callback
 void keyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods);
+// mouse button press callback
 void mouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mods);
+// mouse move callback
 void cursorPosCallback(GLFWwindow* _window, double _xpos, double _ypos);
+// mouse wheel callback
 void scrollCallback(GLFWwindow* _window, double _xoffset, double _yoffset);
+
+
 int main()
 {
-
-
   GLFWwindow* window;
 
   /* Initialize the library */
