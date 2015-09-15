@@ -66,7 +66,11 @@ int main()
   // now clear the screen and swap whilst NGL inits (which may take time)
   glClear(GL_COLOR_BUFFER_BIT);
   // resize the ngl to set the screen size and camera stuff
-  scene->resize(1024,720);
+  // Note we need to get this for retinal display else we will get smaller
+  // window due to pixel size see http://www.glfw.org/docs/latest/window.html#window_fbsize
+  int width, height;
+  glfwGetFramebufferSize  (window,&width,&height);
+  scene->resize(width,height);
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
   {
