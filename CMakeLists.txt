@@ -20,7 +20,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	find_library(MacIOKit IOKit) 
 	find_library(MacCocoa Cocoa)
 	find_library(MacCoreVideo CoreVideo)
-	set ( PROJECT_LINK_LIBS -lNGL ${MACGL} ${MacIOKit}  ${MacCocoa} ${MacCoreVideo})
+	set ( PROJECT_LINK_LIBS -lNGL ${MACGL} ${MacIOKit}  ${MacCocoa} ${MacCoreVideo} )
 
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	add_definitions(-DLINUX)

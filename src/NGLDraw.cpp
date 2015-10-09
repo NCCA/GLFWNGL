@@ -73,11 +73,9 @@ NGLDraw::NGLDraw()
 
 NGLDraw::~NGLDraw()
 {
-  ngl::NGLInit *Init = ngl::NGLInit::instance();
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
   delete m_light;
   delete m_cam;
-  Init->NGLQuit();
 }
 
 void NGLDraw::resize(int _w, int _h)
