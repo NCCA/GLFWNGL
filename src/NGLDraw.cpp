@@ -21,8 +21,8 @@ NGLDraw::NGLDraw()
   // we are creating a shader called Phong
   shader->createShaderProgram("Phong");
   // now we are going to create empty shaders for Frag and Vert
-  shader->attachShader("PhongVertex",ngl::VERTEX);
-  shader->attachShader("PhongFragment",ngl::FRAGMENT);
+  shader->attachShader("PhongVertex",ngl::ShaderType::VERTEX);
+  shader->attachShader("PhongFragment",ngl::ShaderType::FRAGMENT);
   // attach the source
   shader->loadShaderSource("PhongVertex","shaders/PhongVertex.glsl");
   shader->loadShaderSource("PhongFragment","shaders/PhongFragment.glsl");
