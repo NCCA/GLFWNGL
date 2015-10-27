@@ -6,6 +6,8 @@ project(${PROJECT_NAME})
 include_directories(include $ENV{HOME}/NGL/include)
 find_package(PkgConfig REQUIRED)
 set( ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig" )
+# use C++ 11
+set(CMAKE_CXX_STANDARD 11)
 
 pkg_search_module(GLFW REQUIRED glfw3)
 include_directories(${GLFW_INCLUDE_DIRS})
