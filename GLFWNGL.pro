@@ -12,7 +12,7 @@ isEqual(QT_MAJOR_VERSION, 5) {
 	DEFINES +=QT5BUILD
 }
 
-macx:LIBS+=-lglfw3
+macx:LIBS+=-lglfw3 -framework OpenGL -framework IOKit -framework Cocoa -framework CoreVideo
 linux:LIBS+=-lglfw3 -lX11 -lXxf86vm -L/usr/lib64 -lXrandr -lXi -lXinerama -lXcursor
 
 # where to put moc auto generated files
