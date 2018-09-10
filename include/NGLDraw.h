@@ -1,9 +1,10 @@
-#ifndef NGLDRAW_H__
-#define NGLDRAW_H__
+#ifndef NGLDRAW_H_
+#define NGLDRAW_H_
 
-#include <ngl/Camera.h>
-#include <ngl/Light.h>
 #include <GLFW/glfw3.h>
+#include <ngl/Vec3.h>
+#include <ngl/Mat4.h>
+
 class NGLDraw
 {
   public :
@@ -89,7 +90,8 @@ class NGLDraw
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Our Camera
     //----------------------------------------------------------------------------------------------------------------------
-    ngl::Camera m_cam;
+    ngl::Mat4 m_view;
+    ngl::Mat4 m_project;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief the model position for mouse movement
     //----------------------------------------------------------------------------------------------------------------------
