@@ -1,10 +1,9 @@
 #ifndef NGLDRAW_H_
 #define NGLDRAW_H_
 
-#include <GLFW/glfw3.h>
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
-
+#include <GLFW/glfw3.h>
 class NGLDraw
 {
   public :
