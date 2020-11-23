@@ -34,7 +34,7 @@ class NGLDraw
     /// @brief this method is called every time a mouse button is presses
     /// @param _event the SDL mouse event structure containing all mouse info
     //----------------------------------------------------------------------------------------------------------------------
-    void mousePressEvent (int _button, double _x, double _y);
+    void mousePressEvent (int _button, float _x, float _y);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called everytime the mouse button is released
     /// @param _event the SDL mouse event structure containing all mouse info
@@ -44,7 +44,7 @@ class NGLDraw
     /// @brief this method is called everytime the mouse wheel is moved
     /// @param _event the SDL mouse event structure containing all mouse info
     //----------------------------------------------------------------------------------------------------------------------
-    void wheelEvent(double _x, double _y);
+    void wheelEvent(float _x, float _y);
   private :
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief method to load transform data to the shaders

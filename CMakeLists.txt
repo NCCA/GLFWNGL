@@ -1,46 +1,73 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.12)
+#-------------------------------------------------------------------------------------------
+# I'm going to use vcpk in most cases for our install of 3rd party libs
+# this is going to check the environment variable for CMAKE_TOOLCHAIN_FILE and this must point to where
+# vcpkg.cmake is in the University this is set in your .bash_profile to
+# export CMAKE_TOOLCHAIN_FILE=/public/devel/2020/vcpkg/scripts/buildsystems/vcpkg.cmake
+#-------------------------------------------------------------------------------------------
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{CMAKE_TOOLCHAIN_FILE})
+   set(CMAKE_TOOLCHAIN_FILE $ENV{CMAKE_TOOLCHAIN_FILE})
+endif()
+
 # Name of the project
-set(PROJECT_NAME GLFWNGL)
-project(${PROJECT_NAME})
-#Bring the headers into the project (local ones)
+project(GLFWNGLBuild)
+# This is the name of the Exe change this and it will change everywhere
+set(TargetName GLFWNGL)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(OpenImageIO CONFIG REQUIRED)
+find_package(freetype CONFIG REQUIRED)
+# use C++ 17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+# Set the name of the executable we want to build
+add_executable(${TargetName})
+
+# Add NGL include path
 include_directories(include $ENV{HOME}/NGL/include)
-find_package(PkgConfig REQUIRED)
-set( ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig" )
-# use C++ 11
-set(CMAKE_CXX_STANDARD 11)
-
-pkg_search_module(GLFW REQUIRED glfw3)
-include_directories(${GLFW_INCLUDE_DIRS})
-
-#the file(GLOB...) allows for wildcard additions of our src dir
-set(SOURCES src/main.cpp  src/NGLDraw.cpp include/NGLDraw.h  )
+target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp  
+			${PROJECT_SOURCE_DIR}/src/NGLDraw.cpp  
+			${PROJECT_SOURCE_DIR}/include/NGLDraw.h  
+)
+add_compile_definitions(ADDLARGEMODELS)
+add_compile_definitions(GLM_ENABLE_EXPERIMENTAL)
 
 # see what platform we are on and set platform defines
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	add_definitions(-DDARWIN)
+	message("Mac build")
 	find_library(MACGL OpenGL)
-	find_library(MacIOKit IOKit) 
-	find_library(MacCocoa Cocoa)
-	find_library(MacCoreVideo CoreVideo)
-	set ( PROJECT_LINK_LIBS -lNGL ${MACGL} ${MacIOKit}  ${MacCocoa} ${MacCoreVideo} )
-
+	find_package(IlmBase CONFIG REQUIRED)
+	find_package(OpenEXR CONFIG REQUIRED)
+	set(EXTRALIBS  ${MACGL})
+	target_link_libraries(${TargetName} PRIVATE  IlmBase::Iex IlmBase::Half IlmBase::Imath IlmBase::IexMath)
+	target_link_libraries(${TargetName} PRIVATE OpenEXR::IlmImf OpenEXR::IlmImfUtil OpenEXR::IlmImfConfig)
+add_definitions(-DGL_SCILENCE_DEPRICATION)
+	set ( PROJECT_LINK_LIBS ${MACGL} NGL)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	add_definitions(-DLINUX)
-	set ( PROJECT_LINK_LIBS -lNGL -lGL -lX11 -lXxf86vm -lXrandr -lXi -lXinerama -lXcursor)
-
+	set ( PROJECT_LINK_LIBS -lGL NGL)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	include_directories(include $ENV{HOMEDRIVE}/$ENV{HOMEPATH}/NGL/include)
+	link_directories($ENV{HOMEDRIVE}/$ENV{HOMEPATH}/NGL/lib)	
+	target_link_libraries(${TargetName} PRIVATE $ENV{HOMEDRIVE}/$ENV{HOMEPATH}/NGL/lib/NGL.lib)
+	add_compile_definitions(_USE_MATH_DEFINES)
+	add_compile_definitions(NOMINMAX)
+	target_compile_definitions(${TargetName} PRIVATE /wd4251)
+	# Need to define this when building shared library or suffer dllimport errors
+	add_compile_definitions(BUILDING_DLL)
 endif()
 
 # now add NGL specific values
-link_directories( ~/NGL/lib /usr/lib64 )
-include_directories(~/NGL/include/)
-# as NGL uses Qt we need to define this flag
-add_definitions(-DQT5BUILD)
+target_link_directories(${TargetName} PRIVATE $ENV{HOME}/NGL/lib )
 
-# NGL also needs the OpenGL framework from Qt so add it
-find_package(Qt5OpenGL)
+# add exe and link libs that must be after the other defines
+target_link_libraries(${TargetName} PRIVATE OpenImageIO::OpenImageIO OpenImageIO::OpenImageIO_Util)
+target_link_libraries(${TargetName} PRIVATE ${PROJECT_LINK_LIBS}  glfw fmt::fmt-header-only freetype )
 
-# add exe and link libs this must be after the other defines
-add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} ${PROJECT_LINK_LIBS} Qt5::OpenGL  ${GLFW_LIBRARIES}   )
-
+add_custom_target(${TargetName}CopyShaders ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+    $<TARGET_FILE_DIR:${TargetName}>/shaders
+)

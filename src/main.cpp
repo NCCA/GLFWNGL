@@ -3,7 +3,7 @@
 #include "NGLDraw.h"
 #include <ngl/NGLInit.h>
 #include <GLFW/glfw3.h>
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 
 // now we create an instance of our ngl class, this will init NGL and setup basic
@@ -13,7 +13,7 @@
 // it has to be a pointer as we need to ensure we have a context before we init the class (or re-engineer)
 // to have a initGL functions.
 // best to make this a scoped pointer for safety,
-boost::scoped_ptr<NGLDraw> scene;
+std::unique_ptr<NGLDraw> scene;
 // used to store the current active button for the mouse callbacks
 static int s_activeButton;
 // key callback
@@ -33,11 +33,12 @@ int main()
   /* Initialize the library */
   if (!glfwInit())
   {
+      std::cout<<"Failed to init GLFW\n";
       return EXIT_FAILURE;
   }
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   /* Create a windowed mode window and its OpenGL context */
@@ -61,7 +62,7 @@ int main()
   // we need to initialise the NGL lib which will load all of the OpenGL functions, this must
   // be done once we have a valid GL context but before we call any GL commands. If we dont do
   // this everything will crash
-  ngl::NGLInit::instance();
+  ngl::NGLInit::initialize();
   scene.reset(new NGLDraw);
   // now clear the screen and swap whilst NGL inits (which may take time)
   glClear(GL_COLOR_BUFFER_BIT);
@@ -114,7 +115,7 @@ void mouseButtonCallback(GLFWwindow* _window, int _button, int _action, int _mod
   if (_action == GLFW_PRESS)
   {
     s_activeButton=_button;
-    scene->mousePressEvent(_button,x,y);
+    scene->mousePressEvent(_button,static_cast<float>(x),static_cast<float>(y));
   }
 
   else if (_action == GLFW_RELEASE)
@@ -130,11 +131,11 @@ void cursorPosCallback(GLFWwindow* _window, double _xpos, double _ypos)
   double x,y;
   glfwGetCursorPos(_window,&x,&y);
 
-  scene->mouseMoveEvent(s_activeButton,_xpos,_ypos);
+  scene->mouseMoveEvent(s_activeButton,static_cast<float>(_xpos),static_cast<float>(_ypos));
 }
 
 void scrollCallback(GLFWwindow* _window, double _xoffset, double _yoffset)
 {
-  scene->wheelEvent(_xoffset,_yoffset);
+  scene->wheelEvent(static_cast<float>(_xoffset),static_cast<float>(_yoffset));
 }
 
