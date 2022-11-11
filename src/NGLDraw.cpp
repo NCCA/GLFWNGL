@@ -2,6 +2,7 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/NGLInit.h>
 #include <ngl/Transformation.h>
+#include <iostream>
 const static float INCREMENT = 0.01f;
 const static float ZOOM = 0.05f;
 NGLDraw::NGLDraw()
